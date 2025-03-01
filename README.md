@@ -52,7 +52,7 @@ BOB_LAUNCH_CONFIG=/path/to/config.yaml ros2 launch bob_launch generic.launch.py 
 
 ### Example config starting Launch file
 ```YAML
-#  launch example from a package
+#  launch example from a package with pus to namespace
 - launch_file: 
     package_name: bob_llama_cpp
     launch_name: llm.launch.py
