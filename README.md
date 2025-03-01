@@ -1,5 +1,5 @@
 # ROS Package Bob Launch
-This ROS package is part of Bob's NLP and LLM tools.
+This repository is part of Bob's ROS Packages.
 
 ## Launch File generic.launch.py
 
@@ -10,8 +10,8 @@ Since the ROS Launch System has the property of working context-related, this la
 Ultimately, this kind of working simplifies the startup configuration compared to the common ROS startup files, which are rather inconvenient for hassle free routing of huge amounts of ROS topics.
 
 ### Environment Variables
-* `BOB_LAUNCH_CONFIG` - path to the YAML config, default: not set
-* `BOB_LAUNCH_AUTOABORT` - Weather to stop launch script if one of the nodes exits, default: 1
+* `BOB_LAUNCH_CONFIG` - Path to the YAML config. Default: not set
+* `BOB_LAUNCH_AUTOABORT` - Weather to stop launch script if one of the nodes exits what is useful for docker container. Default: 1
 
 ### Launch Arguments:
 * `config_nodes` - An optional Ros Nodes parameter file can be provided which will be passed to all contained nodes
@@ -19,11 +19,11 @@ Ultimately, this kind of working simplifies the startup configuration compared t
 ### Starting generic Launch file
 ```bash
 # start everything from config
-export BOB_LAUNCH_CONFIG=/path/to/config.yaml; ros2 launch bob_launch generic.launch.py
+BOB_LAUNCH_CONFIG=/path/to/config.yaml ros2 launch bob_launch generic.launch.py
 
 # start everything from config 
 # in addition pass a typical ROS parameter config file to all contained ros nodes within our config
-export BOB_LAUNCH_CONFIG=/path/to/config.yaml; ros2 launch bob_launch generic.launch.py config_nodes:=nodes_config.yaml
+BOB_LAUNCH_CONFIG=/path/to/config.yaml ros2 launch bob_launch generic.launch.py config_nodes:=nodes_config.yaml
 ```
 
 ### Example config starting Nodes
@@ -39,10 +39,15 @@ export BOB_LAUNCH_CONFIG=/path/to/config.yaml; ros2 launch bob_launch generic.la
     - -r
     - __ns:=/bob_v2
 
-# start rqt graph node
-- name: rqt_graph
-  package: rqt_graph
-  executable: rqt_graph
+# start usb_cam node with a nodes parameter file
+# sudo apt-get install ros-<ros2-distro>-usb-cam
+- name: usb_cam
+  package: usb_cam
+  executable: usb_cam_node_exe
+  arguments:
+    - --ros-args
+    - --params-file
+    - /path/to/nodes_params.yaml
 ```
 
 ### Example config starting Launch file
