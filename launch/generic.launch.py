@@ -14,10 +14,8 @@
 # limitations under the License.
 #
 
-"""This generic ROS launch file is able to spawn Ros Nodes or other ROS Launch files from a YAML configuration file.
-
-Since the ROS Launch System has the property of working context-related, this launch file must be started in a special way to be able to use a config to dynamically generate the final launch description.
-
+"""This generic ROS launch file is able to spawn Ros Nodes or other ROS Launch files from a YAML configuration file. 
+Since the ROS Launch System has the property of working context-related, this launch file must be started in a special way to be able to use a config to dynamically generate the final launch description. 
 Ultimately, this kind of working simplifies the startup configuration compared to the common ROS startup files, which are rather inconvenient for the proper routing of huge amounts of ROS topics.
 """
 

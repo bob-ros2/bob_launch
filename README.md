@@ -80,7 +80,7 @@ BOB_LAUNCH_CONFIG=/path/to/config.yaml ros2 launch bob_launch generic.launch.py 
 ## Helper Script launch.sh
 ```bash
 # start with helper script
-# by defult the launch will abort if one node exists
+# by default the launch will abort if one node exists
 ros2 run bob_launch launch.sh /path/to/launch.yaml nodes_config.yaml
 
 # start with helper script
