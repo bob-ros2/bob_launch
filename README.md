@@ -67,14 +67,31 @@ BOB_LAUNCH_CONFIG=/path/to/config.yaml ros2 launch bob_launch generic.launch.py 
 - launch_file: /path/to/my.launch.py
 
 # start in addition rqt nodes
-
 - name: rqt_graph
   package: rqt_graph
   executable: rqt_graph
+```
 
-- name: rqt_reconfigure
-  package: rqt_reconfigure
-  executable: rqt_reconfigure
+### Example using YAML features Anchors and Aliases
+The YAML format has features to reuse variables or even complex sub structures across the YAML file. See the YAML documentation for further information.
+```YAML
+- name: voice
+  package: rosspeaks
+  executable: speak
+  arguments:
+    - --ros-args
+    - -r
+    - &ns __ns:=/bob_v2
+
+- name: llm
+  package: bob_llama_cpp
+  executable: llm
+  arguments:
+    - --ros-args
+    - -r
+    - llm_out:=speak
+    - -r
+    - *ns
 ```
 
 ## Helper Script launch.sh
