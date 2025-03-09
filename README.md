@@ -10,8 +10,8 @@ Since the ROS Launch System has the property of working context-related, this la
 Ultimately, this kind of working simplifies the startup configuration compared to the common ROS startup files, which are rather inconvenient for hassle free routing of huge amounts of ROS topics.
 
 ### Environment Variables
-* `BOB_LAUNCH_CONFIG` - Path to the YAML config. Default: not set
-* `BOB_LAUNCH_AUTOABORT` - Wether to stop launch script if one of the nodes exits. This is useful when running in a docker container. If not existing, default: 1
+* `BOB_LAUNCH_CONFIG` - Path to the YAML config.
+* `BOB_LAUNCH_AUTOABORT` - Wether to stop launch script if one of the nodes exits. This is useful when running in a docker container. If variable is not existing the default is: 1
 
 ### Launch Arguments:
 * `config_nodes` - An optional Ros Nodes parameter file can be provided which will be passed to all contained nodes
