@@ -75,7 +75,9 @@ BOB_LAUNCH_CONFIG=/path/to/config.yaml ros2 launch bob_launch generic.launch.py 
 ### Example using YAML features Anchors and Aliases
 The YAML format has features to reuse variables or even complex sub structures across the YAML file. See the YAML documentation for further information.
 ```YAML
-# Anchors can be defined like this. That works because the launch script identifies nodes or launch configs from their properties names.
+# Anchors can be defined like this. 
+# That works because the launch script identifies nodes 
+# or launch configs from their properties names.
 - &ns __ns:=/bob_v2
 
 - name: voice
