@@ -75,13 +75,16 @@ BOB_LAUNCH_CONFIG=/path/to/config.yaml ros2 launch bob_launch generic.launch.py 
 ### Example using YAML features Anchors and Aliases
 The YAML format has features to reuse variables or even complex sub structures across the YAML file. See the YAML documentation for further information.
 ```YAML
+# Anchors can be defined like this. That works because the launch script identifies nodes or launch configs from their properties names.
+- &ns __ns:=/bob_v2
+
 - name: voice
   package: rosspeaks
   executable: speak
   arguments:
     - --ros-args
     - -r
-    - &ns __ns:=/bob_v2
+    - *ns
 
 - name: llm
   package: bob_llama_cpp
@@ -96,12 +99,24 @@ The YAML format has features to reuse variables or even complex sub structures a
 
 ## Helper Script launch.sh
 ```bash
+# help output
+ros2 run bob_launch launch.sh -h
+Wrapper script to start ROS package bob_launch generic.launch.py with the given parameter.
+This script can also read YAML launch <config> from stdin.
+
+Usage: launch.sh [<config> [<nodes-config>]]
+       cat *.yaml | launch.sh [<nodes-config>]
+```
+```bash
 # start with helper script
 # by default the launch will abort if one node exists
 ros2 run bob_launch launch.sh /path/to/launch.yaml nodes_config.yaml
 
 # start with helper script
-# don't abort everything if one node exists
+# don't abort everything if one node is exiting
 export BOB_LAUNCH_AUTOABORT=0
 ros2 run bob_launch launch.sh /path/to/launch.yaml
+
+# start with helper script and launch config from stdin
+cat *.yaml | ros2 run bob_launch launch.sh /path/to/nodes_config.yaml
 ```
