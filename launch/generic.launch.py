@@ -75,7 +75,9 @@ def create_node(args: dict, config_nodes: LaunchConfiguration) -> Node:
         output= 'log' if 'output' not in args else args['output'],
         on_exit= None if not int(os.getenv('BOB_LAUNCH_AUTOABORT', '1')) else [
             LogInfo(
-                msg=[f"ROS Node {args['executable']} ended. Stopping everything..."]),
+                msg=[f"ROS Node {args['executable']} ended. Stopping everything... "]),
+            LogInfo(
+                msg=["To disable this behaviour set env variable BOB_LAUNCH_AUTOABORT=0"]),
             Shutdown(reason='launch is shutting down')])
 
 def create_entities(config: list, config_nodes: LaunchConfiguration) -> list:
@@ -83,7 +85,7 @@ def create_entities(config: list, config_nodes: LaunchConfiguration) -> list:
     for entity in config:
         if 'executable' in entity:
             entities.append(create_node(entity, config_nodes))
-        else:
+        elif 'launch_file' in entity:
             entities.append(
                 create_launcher(
                     entity['launch_file'], 
@@ -98,7 +100,8 @@ def generate_launch_description() -> LaunchDescription:
     launch_config = os.getenv('BOB_LAUNCH_CONFIG', '')
 
     if not launch_config:
-        print("[ERROR] env var BOB_LAUNCH_CONFIG not set!")
+        print("[ERROR] Environment variable BOB_LAUNCH_CONFIG not set!", 
+            file=sys.stderr)
         sys.exit(1)
 
     initial_entities = [
@@ -107,8 +110,8 @@ def generate_launch_description() -> LaunchDescription:
     ]   
 
     try: 
-        with open(launch_config, 'r') as f:
-            launch_config = f.read()
+        with open(launch_config, 'r') as file:
+            launch_config = file.read()
     except: pass
 
     try:
@@ -118,11 +121,14 @@ def generate_launch_description() -> LaunchDescription:
     except:
         try:
             config = yaml.safe_load(launch_config)
+            if isinstance(config, str):
+                raise Exception("Cant't load YAML!")
             initial_entities.append(
                 LogInfo(msg="YAML config loaded"))
         except:
-            print("[ERROR] config is no file or not JSON/YAML parsable!", 
-                file=sys.stdout)
+            print("[ERROR] Config is no file or not JSON/YAML parsable! "
+                "Check the environment variable BOB_LAUNCH_CONFIG", 
+                file=sys.stderr)
             sys.exit(1)
     finally:
         initial_entities += create_entities(
