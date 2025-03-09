@@ -11,7 +11,7 @@ Ultimately, this kind of working simplifies the startup configuration compared t
 
 ### Environment Variables
 * `BOB_LAUNCH_CONFIG` - Path to the YAML config. Default: not set
-* `BOB_LAUNCH_AUTOABORT` - Wether to stop launch script if one of the nodes exits. This is useful when running in a docker container. Default: 1
+* `BOB_LAUNCH_AUTOABORT` - Wether to stop launch script if one of the nodes exits. This is useful when running in a docker container. If not existing, default: 1
 
 ### Launch Arguments:
 * `config_nodes` - An optional Ros Nodes parameter file can be provided which will be passed to all contained nodes
