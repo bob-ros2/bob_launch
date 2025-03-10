@@ -65,15 +65,16 @@ def create_launcher(
 def create_node(args: dict, config_nodes: LaunchConfiguration) -> Node:
     chars = string.ascii_letters + string.digits
     return Node(
-        package=args['package'],
-        executable=args['executable'],
-        name=(args['executable'] \
+        package    = args['package'],
+        executable = args['executable'],
+        name       = (args['executable'] \
             + '_' + ''.join(secrets.choice(chars) for i in range(8))
             if 'name' not in args else args['name']),
-        arguments=None if 'arguments' not in args else args['arguments'],
-        parameters=[config_nodes],
-        output= 'log' if 'output' not in args else args['output'],
-        on_exit= None if not int(os.getenv('BOB_LAUNCH_AUTOABORT', '1')) else [
+        arguments  = None if 'arguments' not in args else args['arguments'],
+        parameters = [config_nodes],
+        respawn    = False if 'respawn' not in args else args['respawn'],
+        output     = 'log' if 'output' not in args else args['output'],
+        on_exit    = None if not int(os.getenv('BOB_LAUNCH_AUTOABORT', '1')) else [
             LogInfo(
                 msg=[f"ROS Node {args['executable']} ended. Stopping everything... "]),
             LogInfo(
