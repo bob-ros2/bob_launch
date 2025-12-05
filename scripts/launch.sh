@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 CONF=$1
 NODESCONF=$2

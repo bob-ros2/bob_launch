@@ -1,24 +1,6 @@
-#
-# Copyright 2024 BobRos
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
-
-"""This generic ROS launch file is able to spawn Ros Nodes or other ROS Launch files from a YAML configuration file. 
-Since the ROS Launch System has the property of working context-related, this launch file must be started in a special way to be able to use a config to dynamically generate the final launch description. 
-Ultimately, this kind of working simplifies the startup configuration compared to the common ROS startup files, which are rather inconvenient for the proper routing of huge amounts of ROS topics.
 """
-
+This generic ROS launch file is able to spawn Ros Nodes or other ROS Launch files from a YAML configuration file.
+"""
 import os
 import sys
 import json
