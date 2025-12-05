@@ -9,7 +9,7 @@ usage_exit() { # [<msg> [<rc>]]
   Wrapper script to start ROS package bob_launch generic.launch.py with the given parameter.
   This script can also read YAML launch <config> from stdin.
 
-  Usage: $(basename $0) [<config> [<nodes-config>]]
+  Usage: $(basename $0) <config> [<nodes-config>]
          cat *.yaml | $(basename $0) [<nodes-config>]
 
 EOF
