@@ -1,122 +1,109 @@
-# ROS Package [bob_launch](https://github.com/bob-ros2/bob_launch)
-This repository is part of Bob's ROS Packages.
+# bob_launch
 
-## Launch File generic.launch.py
+`bob_launch` is a powerful meta-launcher for ROS 2 that enables dynamic system orchestration using YAML or JSON configuration files. It allows you to define, compose, and launch complex ROS 2 graphs without writing boilerplate Python launch files.
 
-This generic launch file spawns ROS nodes or other launch files from a YAML configuration file, simplifying the management of complex ROS setups.
+## High-Level Capabilities
 
-**Why use an environment variable?** ROS launch arguments are processed at runtime, which is too late for the script to dynamically generate the launch description. The `BOB_LAUNCH_CONFIG` environment variable is read during the launch file's generation phase, allowing the script to parse your configuration and construct the final launch structure before execution begins.
+- **Dynamic Orchestration**: Spawn nodes or include other launch files based on external configuration.
+- **Composition over Coding**: Define your entire ROS system in simple YAML.
+- **Streamlined Workflow**: Use the `launch.sh` wrapper to supply configurations via files, pipes, or direct strings.
+- **Auto-Abort Protection**: Optionally shut down the entire launch tree if any critical node exits (ideal for Docker/CI).
+- **Global Parameters**: Inject a shared parameter file into all nodes launched within a configuration.
 
-### Environment Variables
-* `BOB_LAUNCH_CONFIG` - Path to the YAML config.
-* `BOB_LAUNCH_AUTOABORT` - Wether to stop launch script if one of the nodes exits. This is useful when running in a docker container. If variable is not existing the default is: 1
+## Quick Start: `launch.sh`
 
-### Launch Arguments:
-* `config_nodes` - An optional Ros Nodes parameter file can be provided which will be passed to all contained nodes
+The `launch.sh` script is the primary entry point. It simplifies execution by handling environment variables and temporary file management for you.
 
-### Starting generic Launch file
+### 1. Launch from a file
 ```bash
-# start everything from config
-BOB_LAUNCH_CONFIG=/path/to/config.yaml ros2 launch bob_launch generic.launch.py
-
-# start everything from config 
-# in addition pass a typical ROS parameter config file to all contained ros nodes within our config
-BOB_LAUNCH_CONFIG=/path/to/config.yaml ros2 launch bob_launch generic.launch.py config_nodes:=nodes_config.yaml
+ros2 run bob_launch launch.sh my_config.yaml
 ```
 
-### Example config starting Nodes
-```YAML
-# image view node
-- name: image_view
-  package: image_view
-  executable: image_view
-  arguments:
-    - --ros-args
-    - -p
-    - image:=/image_topic
-    - -r
-    - __ns:=/bob_v2
+### 2. Launch with a global parameter file
+```bash
+ros2 run bob_launch launch.sh my_config.yaml global_params.yaml
+```
 
-# start usb_cam node with a nodes parameter file
-# sudo apt-get install ros-<ros2-distro>-usb-cam
-- name: usb_cam
+### 3. Launch from a JSON config file
+```bash
+ros2 run bob_launch launch.sh my_config.json
+```
+
+## Advanced Usage & AI Agent Integration
+
+`bob_launch` is designed to be highly scriptable, making it an ideal tool for AI Agents needing to spawn ROS components on the fly.
+
+### Pipe a String Directly (Dynamic Spawning)
+An agent can generate a YAML string and pipe it directly to the launcher without creating a persistent file:
+```bash
+echo "- name: talker
+  package: demo_nodes_cpp
+  executable: talker" | ros2 run bob_launch launch.sh
+```
+
+### Multi-File Composition
+You can quickly composite different system "layers" (e.g., base drivers + perception + mission logic) by concatenating files into the pipe:
+```bash
+cat base_robot.yaml nav2_stack.yaml custom_logic.yaml | ros2 run bob_launch launch.sh
+```
+
+### Mixing Pipes and Arguments
+Pipe the main logic while providing a shared parameter file as an argument:
+```bash
+cat dynamic_nodes.yaml | ros2 run bob_launch launch.sh shared_params.yaml
+```
+
+## Configuration Schema
+
+### Spawning Nodes
+```yaml
+- name: usb_cam               # Optional: defaults to executable_name + random suffix
   package: usb_cam
   executable: usb_cam_node_exe
-  arguments:
+  arguments:                  # Optional: list of CLI arguments
     - --ros-args
     - --params-file
-    - /path/to/nodes_params.yaml
+    - /path/to/params.yaml
+  respawn: false              # Optional: default is false
+  output: log                 # Optional: 'log' or 'screen'
 ```
 
-### Example config starting Launch file
-```YAML
-#  launch example from a package with push to namespace
+### Including Launch Files
+```yaml
 - launch_file: 
-    package_name: bob_llama_cpp
+    package_name: bob_llm
     launch_name: llm.launch.py
-  # optional
-  launch_args:
-    terminal: 'true'
-    ns: ''
-  # optional
-  launch_ns: /llmtest/a_sub_group
-
-# launch example using just a path
-- launch_file: /path/to/my.launch.py
-
-# start in addition rqt nodes
-- name: rqt_graph
-  package: rqt_graph
-  executable: rqt_graph
+  launch_args:                # Optional: arguments passed to the included launch
+    model: 'gpt-4'
+  launch_ns: /llm_group       # Optional: pushes everything into this namespace
 ```
 
-### Example using YAML features Anchors and Aliases
-The YAML format has features to reuse variables or even complex sub structures across the YAML file. See the YAML documentation for further information.
-```YAML
-# Anchors can be defined like this. 
-# That works because the launch script identifies nodes 
-# or launch configs from their properties names.
-- &ns __ns:=/bob_v2
+### Advanced YAML: Anchors & Aliases
+Great for reusing common namespaces or remappings across many nodes:
+```yaml
+- &common_ns __ns:=/robot_1
 
-- name: voice
-  package: rosspeaks
-  executable: speak
-  arguments:
-    - --ros-args
-    - -r
-    - *ns
+- name: drive_node
+  package: my_pkg
+  executable: driver
+  arguments: ["--ros-args", "-r", *common_ns]
 
-- name: llm
-  package: bob_llama_cpp
-  executable: llm
-  arguments:
-    - --ros-args
-    - -r
-    - llm_out:=speak
-    - -r
-    - *ns
+- name: sensor_node
+  package: my_pkg
+  executable: sensor
+  arguments: ["--ros-args", "-r", *common_ns]
 ```
 
-## Helper Script launch.sh
-```bash
-# help output
-ros2 run bob_launch launch.sh -h
-Wrapper script to start ROS package bob_launch generic.launch.py with the given parameter.
-This script can also read YAML launch <config> from stdin.
+## Technical Design: Why Environment Variables?
 
-Usage: launch.sh [<config> [<nodes-config>]]
-       cat *.yaml | launch.sh [<nodes-config>]
-```
-```bash
-# start with helper script
-# by default the launch will abort if one node exists
-ros2 run bob_launch launch.sh /path/to/launch.yaml nodes_config.yaml
+Unlike standard ROS launch files that rely solely on `LaunchArguments`, `bob_launch` uses a hybrid approach to enable **Dynamic Generation**.
 
-# start with helper script
-# don't abort everything if one node is exiting
-export BOB_LAUNCH_AUTOABORT=0
-ros2 run bob_launch launch.sh /path/to/launch.yaml
+1.  **The Problem**: ROS `LaunchConfiguration` substitutions are evaluated at **Runtime**. This is too late if you want to use the config data to decide *which* nodes to even create.
+2.  **The Solution**: `bob_launch` reads the `BOB_LAUNCH_CONFIG` environment variable during the **Generation Phase**. 
+3.  **The Result**: The Python script parses the YAML, validates the structure, and constructs the final `LaunchDescription` before the ROS execution engine starts.
 
-# start with helper script and launch config from stdin
-cat *.yaml | ros2 run bob_launch launch.sh /path/to/nodes_config.yaml
-```
+### Environment Variables Reference
+| Variable | Description | Default |
+| :--- | :--- | :--- |
+| `BOB_LAUNCH_CONFIG` | Full path to the YAML/JSON config file (or raw string). | None (Required) |
+| `BOB_LAUNCH_AUTOABORT` | If `1`, shuts down the launch if any node exits. | `1` |
