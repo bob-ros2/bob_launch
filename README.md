@@ -29,7 +29,7 @@ ros2 run bob_launch launch.sh my_config.yaml global_params.yaml
 ros2 run bob_launch launch.sh my_config.json
 ```
 
-## Advanced Usage & AI Agent Integration
+## Advanced Usage
 
 `bob_launch` is designed to be highly scriptable, making it an ideal tool for AI Agents needing to spawn ROS components on the fly.
 
