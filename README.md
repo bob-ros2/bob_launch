@@ -29,6 +29,16 @@ ros2 run bob_launch launch.sh my_config.yaml global_params.yaml
 ros2 run bob_launch launch.sh my_config.json
 ```
 
+### Direct Usage (Alternative)
+If you prefer to bypass the helper script, you can set the environment variable and call the launch file directly:
+```bash
+BOB_LAUNCH_CONFIG=./config.yaml ros2 launch bob_launch generic.launch.py
+```
+To pass a global node parameter file:
+```bash
+BOB_LAUNCH_CONFIG=./config.yaml ros2 launch bob_launch generic.launch.py config_nodes:=node_params.yaml
+```
+
 ## Advanced Usage
 
 `bob_launch` is designed to be highly scriptable, making it an ideal tool for AI Agents needing to spawn ROS components on the fly.
