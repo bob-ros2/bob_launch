@@ -19,19 +19,22 @@ exit $2
 [ "$CONF" != "-h" ] || usage_exit
 
 export BOB_LAUNCH_AUTOABORT=${BOB_LAUNCH_AUTOABORT:-1}
-export BOB_LAUNCH_CONFIG=$CONF
 
-if read -t 0 -N 0; then
-  [ -n "$BOB_LAUNCH_CONFIG" ] || usage_exit "Missing Input!" 1
+if [ -t 0 ]; then
+  # Stdin is a terminal (No pipe)
+  # Usage: launch.sh <config> [<nodes-config>]
+  [ -n "$CONF" ] || usage_exit "Missing config argument!" 1
+  export BOB_LAUNCH_CONFIG=$CONF
   [ -z "$NODESCONF" ] || NODESCONF="config_nodes:=$NODESCONF"
   ros2 launch bob_launch generic.launch.py $NODESCONF
 else
+  # Stdin is a pipe
+  # Usage: cat config.yaml | launch.sh [<nodes-config>]
   temp=$(mktemp --suffix .yaml)
   trap "rm -f $temp 2>/dev/null" EXIT
-  while IFS= read l; do
-    printf "%s\n" "$l" >> $temp
-  done
+  cat > "$temp"
   export BOB_LAUNCH_CONFIG=$temp
+  # If piped, the first argument (if any) is the nodes-config
   [ -z "$CONF" ] || CONF="config_nodes:=$CONF"
   ros2 launch bob_launch generic.launch.py $CONF
 fi
