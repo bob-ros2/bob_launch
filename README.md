@@ -3,11 +3,9 @@ This repository is part of Bob's ROS Packages.
 
 ## Launch File generic.launch.py
 
-This generic ROS launch file is able to spawn and execute Ros Nodes or other ROS Launch files from a YAML configuration file.
+This generic launch file spawns ROS nodes or other launch files from a YAML configuration file, simplifying the management of complex ROS setups.
 
-It streamlines the process of launching multiple components in a ROS environment. You can use a simple YAML configuration file to specify which ROS nodes, including theirs parameters, or other ROS launch files should be started. The tool reads this config file and dynamically generates the necessary launch commands, making it easier to manage complex setups with many ROS topics.
-
-Unlike traditional ROS launch files, which can be cumbersome for routing large numbers of topics, this approach simplifies the startup configuration. However, because the ROS launch system operates in a context-related manner, you need to start this launch file in a specific way to ensure it correctly uses your config file to generate the final launch description. This method not only saves time but also reduces the likelihood of errors in your ROS setup.
+**Why use an environment variable?** ROS launch arguments are processed at runtime, which is too late for the script to dynamically generate the launch description. The `BOB_LAUNCH_CONFIG` environment variable is read during the launch file's generation phase, allowing the script to parse your configuration and construct the final launch structure before execution begins.
 
 ### Environment Variables
 * `BOB_LAUNCH_CONFIG` - Path to the YAML config.
