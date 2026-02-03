@@ -1,0 +1,9 @@
+# Corrected ROS 2 Parameter File
+/**:
+  ros__parameters:
+    # Applied to every node
+    use_sim_time: false
+    # This will now work for any node named 'llm' in any namespace
+    max_history_length: 5
+    process_image_urls: true
+    # api_url: "http://localhost:8011"

@@ -3,7 +3,4 @@
   package: rqt_graph
   executable: rqt_graph
 
-# start rqt reconfigure node
-- name: rqt_reconfigure
-  package: rqt_reconfigure
-  executable: rqt_reconfigure
+# add additional nodes here
