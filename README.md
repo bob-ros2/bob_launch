@@ -6,7 +6,7 @@
 
 - **Dynamic Orchestration**: Spawn nodes or include other launch files based on external configuration.
 - **Composition over Coding**: Define your entire ROS system in simple YAML.
-- **Streamlined Workflow**: Use the `launch.sh` wrapper to supply configurations via files, pipes, or direct strings.
+- **Streamlined Workflow**: Use the `launch.sh` wrapper or native ROS 2 launch arguments.
 - **Auto-Abort Protection**: Optionally shut down the entire launch tree if any critical node exits (ideal for Docker/CI).
 - **Global Parameters**: Inject a shared parameter file into all nodes launched within a configuration.
 
@@ -29,15 +29,20 @@ ros2 run bob_launch launch.sh my_config.yaml global_params.yaml
 ros2 run bob_launch launch.sh my_config.json
 ```
 
-### Direct Usage (Alternative)
-If you prefer to bypass the helper script, you can set the environment variable and call the launch file directly:
+## Native ROS 2 Usage (Preferred)
+
+You can call the launch file directly using standard ROS 2 launch arguments:
+
 ```bash
-BOB_LAUNCH_CONFIG=./config.yaml ros2 launch bob_launch generic.launch.py
+ros2 launch bob_launch generic.launch.py config:=my_config.yaml
 ```
-To pass a global node parameter file:
+
+To pass an optional global node parameter file:
 ```bash
-BOB_LAUNCH_CONFIG=./config.yaml ros2 launch bob_launch generic.launch.py config_nodes:=node_params.yaml
+ros2 launch bob_launch generic.launch.py config:=my_config.yaml config_nodes:=node_params.yaml
 ```
+
+*Note: You can also use the environment variable `BOB_LAUNCH_CONFIG=./my_config.yaml` as an alternative to the `config:=` argument.*
 
 ## Advanced Usage
 
@@ -55,12 +60,6 @@ echo "- name: talker
 You can quickly composite different system "layers" (e.g., base drivers + perception + mission logic) by concatenating files into the pipe:
 ```bash
 cat base_robot.yaml nav2_stack.yaml custom_logic.yaml | ros2 run bob_launch launch.sh
-```
-
-### Mixing Pipes and Arguments
-Pipe the main logic while providing a shared parameter file as an argument:
-```bash
-cat dynamic_nodes.yaml | ros2 run bob_launch launch.sh shared_params.yaml
 ```
 
 ## Configuration Schema
@@ -104,16 +103,9 @@ Great for reusing common namespaces or remappings across many nodes:
   arguments: ["--ros-args", "-r", *common_ns]
 ```
 
-## Technical Design: Why Environment Variables?
-
-Unlike standard ROS launch files that rely solely on `LaunchArguments`, `bob_launch` uses a hybrid approach to enable **Dynamic Generation**.
-
-1.  **The Problem**: ROS `LaunchConfiguration` substitutions are evaluated at **Runtime**. This is too late if you want to use the config data to decide *which* nodes to even create.
-2.  **The Solution**: `bob_launch` reads the `BOB_LAUNCH_CONFIG` environment variable during the **Generation Phase**. 
-3.  **The Result**: The Python script parses the YAML, validates the structure, and constructs the final `LaunchDescription` before the ROS execution engine starts.
-
-### Environment Variables Reference
-| Variable | Description | Default |
+### Launch Arguments & Environment Variables
+| Argument / Variable | Description | Default |
 | :--- | :--- | :--- |
-| `BOB_LAUNCH_CONFIG` | Full path to the YAML/JSON config file (or raw string). | None (Required) |
-| `BOB_LAUNCH_AUTOABORT` | If `1`, shuts down the launch if any node exits. | `1` |
+| `config` | Path to YAML/JSON config file or raw string. | `BOB_LAUNCH_CONFIG` |
+| `config_nodes` | Path to an optional global parameter file. | `BOB_LAUNCH_CONFIG_NODES` |
+| `BOB_LAUNCH_AUTOABORT` | Environment variable: if `1`, shuts down if any node exits. | `1` |
