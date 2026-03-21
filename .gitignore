@@ -1,0 +1,35 @@
+# ROS 2 Build & Dev
+build/
+install/
+log/
+.catkin_tools/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+.eggs/
+
+# IDEs
+.vscode/
+.idea/
+.project
+.pydevproject
+.settings/
+*.swp
+*~
+
+# Local development and test configurations
+llm.yaml
+*.local.yaml
+*.secret.yaml
+
+# Binary data
+*.bag
+*.mcap
+*.db3
