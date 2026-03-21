@@ -14,26 +14,27 @@
 
 """This generic ROS launch file spawns Nodes or Launch files from YAML or JSON config."""
 
-import os
-import sys
 import json
-import yaml
-import string
+import os
 import secrets
-
+import string
+import sys
 from typing import Union
+
+import yaml
+
+from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
-from launch.actions import LogInfo
-from launch.actions import Shutdown
-from launch_ros.actions import Node
-from launch.substitutions import LaunchConfiguration
-from launch.actions import IncludeLaunchDescription
-from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.actions import GroupAction
+from launch.actions import IncludeLaunchDescription
+from launch.actions import LogInfo
 from launch.actions import OpaqueFunction
+from launch.actions import Shutdown
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import LaunchConfiguration
+from launch_ros.actions import Node
 from launch_ros.actions import PushRosNamespace
-from ament_index_python.packages import get_package_share_directory
 
 
 def create_launcher(
@@ -110,7 +111,7 @@ def create_entities(config: list, config_nodes_path: str) -> list:
     :param config_nodes_path: Global parameter file to apply to all nodes.
     :return: List of launch entities (Nodes or LaunchDescriptions).
     """
-    entities = list()
+    entities = []
     for entity in config:
         if 'executable' in entity:
             entities.append(create_node(entity, config_nodes_path))
@@ -141,8 +142,8 @@ def launch_setup(context, *args, **kwargs):
         LaunchConfiguration('config'))
 
     if not launch_config:
-        print('[ERROR] No configuration provided! Use \'config:=\' or '
-              'set environment variable BOB_LAUNCH_CONFIG',
+        print("[ERROR] No configuration provided! Use 'config:=' or "
+              "set environment variable BOB_LAUNCH_CONFIG",
               file=sys.stderr)
         sys.exit(1)
 
@@ -160,11 +161,11 @@ def launch_setup(context, *args, **kwargs):
         try:
             config = yaml.safe_load(launch_config_content)
             if isinstance(config, str):
-                raise ValueError('Can\'t load YAML!')
+                raise ValueError("Can't load YAML!")
             initial_entities.append(LogInfo(msg='YAML config loaded'))
         except (yaml.YAMLError, ValueError):
-            print('[ERROR] Config is no file or not JSON/YAML parsable! '
-                  'Check the \'config\' argument or BOB_LAUNCH_CONFIG',
+            print("[ERROR] Config is no file or not JSON/YAML parsable! "
+                  "Check the 'config' argument or BOB_LAUNCH_CONFIG",
                   file=sys.stderr)
             sys.exit(1)
 
