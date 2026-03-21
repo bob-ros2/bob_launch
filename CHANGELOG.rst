@@ -9,6 +9,7 @@ Changelog for package bob_launch
 * Refactor launch parameter
 * Add support for 'prefix' parameter in configuration
 * Add support for inline 'parameters' in node configuration
+* Add support for '//PKGSHARE' and '//PKGSHARE:pkg' placeholders for dynamic path resolution
 * Contributors: Bob Ros
 
 1.0.0 (2026-02-02)

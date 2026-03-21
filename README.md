@@ -11,6 +11,7 @@
 - **Streamlined Workflow**: Use the `launch.sh` wrapper or native ROS 2 launch arguments.
 - **Auto-Abort Protection**: Optionally shut down the entire launch tree if any critical node exits (ideal for Docker/CI).
 - **Global Parameters**: Inject a shared parameter file into all nodes launched within a configuration.
+- **Path Placeholders**: Use `//PKGSHARE/` (current node package) or `//PKGSHARE:pkg/` to dynamically resolve ROS 2 package share directories in parameters and arguments.
 
 ## Quick Start: `launch.sh`
 

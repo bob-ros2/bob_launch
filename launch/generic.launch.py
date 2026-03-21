@@ -16,6 +16,7 @@
 
 import json
 import os
+import re
 import secrets
 import string
 import sys
@@ -36,6 +37,39 @@ from launch_ros.actions import PushRosNamespace
 import yaml
 
 
+def resolve_pkg_share(value: Union[str, dict, list], current_pkg: str) -> Union[str, dict, list]:
+    """
+    Recursively resolve //PKGSHARE:pkg/ or //PKGSHARE/ placeholders.
+
+    :param value: String, dict, or list to resolve.
+    :param current_pkg: Package name for implicit resolution (//PKGSHARE/...).
+    :return: Resolved value.
+    """
+    if isinstance(value, str):
+        # 1. Handle explicit: //PKGSHARE:pkg/path
+        for match in re.finditer(r'//PKGSHARE:([^/]+)', value):
+            target_pkg = match.group(1)
+            try:
+                share = get_package_share_directory(target_pkg)
+                value = value.replace(f'//PKGSHARE:{target_pkg}', share)
+            except Exception:
+                pass
+
+        # 2. Handle implicit: //PKGSHARE/path (current package)
+        if current_pkg:
+            try:
+                share = get_package_share_directory(current_pkg)
+                value = value.replace('//PKGSHARE', share)
+            except Exception:
+                pass
+        return value
+    elif isinstance(value, dict):
+        return {k: resolve_pkg_share(v, current_pkg) for k, v in value.items()}
+    elif isinstance(value, list):
+        return [resolve_pkg_share(v, current_pkg) for v in value]
+    return value
+
+
 def create_launcher(
         launch_file: Union[str, dict],
         launch_arguments: dict = None,
@@ -48,6 +82,10 @@ def create_launcher(
     :param ns: Namespace to push the included launch items into.
     :return: A LaunchDescription entity.
     """
+    pkg = launch_file['package_name'] if isinstance(launch_file, dict) else None
+    launch_file = resolve_pkg_share(launch_file, pkg)
+    launch_arguments = resolve_pkg_share(launch_arguments, pkg)
+
     if isinstance(launch_file, dict):
         file = os.path.join(
             get_package_share_directory(launch_file['package_name']),
@@ -75,6 +113,7 @@ def create_node(args: dict, config_nodes_path: str) -> Node:
     :param config_nodes_path: Path to a global parameter file to apply.
     :return: A Node entity.
     """
+    args = resolve_pkg_share(args, args.get('package'))
     chars = string.ascii_letters + string.digits
     params = [config_nodes_path] if config_nodes_path else []
     if 'parameters' in args:
