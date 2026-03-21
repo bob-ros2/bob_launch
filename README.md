@@ -77,6 +77,12 @@ cat base_robot.yaml nav2_stack.yaml custom_logic.yaml | ros2 run bob_launch laun
     - /path/to/params.yaml
   respawn: false              # Optional: default is false
   prefix: 'xterm -e'          # Optional: runs node in xterm (or gdb, nice, etc.)
+  parameters:                 # Optional: inline node parameters
+    background_r: 255
+    background_g: 0
+    background_b: 0
+    scalar_param: 1.5
+    some_string: "hello bob"
   output: log                 # Optional: 'log' or 'screen'
 ```
 

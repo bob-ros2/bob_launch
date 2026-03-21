@@ -77,6 +77,9 @@ def create_node(args: dict, config_nodes_path: str) -> Node:
     """
     chars = string.ascii_letters + string.digits
     params = [config_nodes_path] if config_nodes_path else []
+    if 'parameters' in args:
+        p = args['parameters']
+        params.extend(p) if isinstance(p, list) else params.append(p)
 
     return Node(
         package=args['package'],

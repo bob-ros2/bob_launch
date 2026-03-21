@@ -8,6 +8,7 @@ Changelog for package bob_launch
 * Standardize docstrings and copyright headers
 * Refactor launch parameter
 * Add support for 'prefix' parameter in configuration
+* Add support for inline 'parameters' in node configuration
 * Contributors: Bob Ros
 
 1.0.0 (2026-02-02)
