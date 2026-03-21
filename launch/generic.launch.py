@@ -21,9 +21,9 @@ import string
 import sys
 from typing import Union
 
+from ament_index_python.packages import get_package_share_directory
 import yaml
 
-from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.actions import GroupAction
@@ -143,7 +143,7 @@ def launch_setup(context, *args, **kwargs):
 
     if not launch_config:
         print("[ERROR] No configuration provided! Use 'config:=' or "
-              "set environment variable BOB_LAUNCH_CONFIG",
+              'set environment variable BOB_LAUNCH_CONFIG',
               file=sys.stderr)
         sys.exit(1)
 
@@ -164,7 +164,7 @@ def launch_setup(context, *args, **kwargs):
                 raise ValueError("Can't load YAML!")
             initial_entities.append(LogInfo(msg='YAML config loaded'))
         except (yaml.YAMLError, ValueError):
-            print("[ERROR] Config is no file or not JSON/YAML parsable! "
+            print('[ERROR] Config is no file or not JSON/YAML parsable! '
                   "Check the 'config' argument or BOB_LAUNCH_CONFIG",
                   file=sys.stderr)
             sys.exit(1)
