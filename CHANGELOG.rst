@@ -7,6 +7,7 @@ Changelog for package bob_launch
 * Fix linter and style issues for ROS2 compliance
 * Standardize docstrings and copyright headers
 * Refactor launch parameter
+* Add support for 'prefix' parameter in configuration
 * Contributors: Bob Ros
 
 1.0.0 (2026-02-02)

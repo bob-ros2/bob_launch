@@ -87,6 +87,7 @@ def create_node(args: dict, config_nodes_path: str) -> Node:
         arguments=None if 'arguments' not in args else args['arguments'],
         parameters=params,
         respawn=False if 'respawn' not in args else args['respawn'],
+        prefix=None if 'prefix' not in args else args['prefix'],
         output='log' if 'output' not in args else args['output'],
         on_exit=None if not int(os.getenv('BOB_LAUNCH_AUTOABORT', '1')) else [
             LogInfo(
