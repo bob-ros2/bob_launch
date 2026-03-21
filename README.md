@@ -1,4 +1,6 @@
 # ROS Package [bob_launch](https://github.com/bob-ros2/bob_launch)
+[![ROS 2 CI](https://github.com/bob-ros2/bob_launch/actions/workflows/ros2_ci.yml/badge.svg)](https://github.com/bob-ros2/bob_launch/actions/workflows/ros2_ci.yml)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 `bob_launch` is a powerful meta-launcher for ROS 2 that enables dynamic system orchestration using YAML or JSON configuration files. It allows you to define, compose, and launch complex ROS 2 graphs without writing boilerplate Python launch files.
 
