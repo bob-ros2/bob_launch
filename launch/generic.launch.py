@@ -22,8 +22,6 @@ import sys
 from typing import Union
 
 from ament_index_python.packages import get_package_share_directory
-import yaml
-
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.actions import GroupAction
@@ -35,6 +33,7 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 from launch_ros.actions import PushRosNamespace
+import yaml
 
 
 def create_launcher(
