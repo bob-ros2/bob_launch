@@ -13,6 +13,7 @@ Changelog for package bob_launch
 * Add support for environment variable substitution (${VAR} and ${VAR:-default}) in configuration files
 * Enable dynamic placeholder resolution for 'config' and 'config_nodes' launch arguments
 * Standardize placeholder resolution across all configuration fields including 'launch_ns'
+* Add support for native ROS 2 remappings in node configurations
 * Contributors: Bob Ros
 
 1.0.0 (2026-02-02)

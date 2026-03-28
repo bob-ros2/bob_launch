@@ -129,6 +129,14 @@ def create_node(args: dict, config_nodes_path: str) -> Node:
         p = args['parameters']
         params.extend(p) if isinstance(p, list) else params.append(p)
 
+    remappings = None
+    if 'remappings' in args:
+        r = args['remappings']
+        if isinstance(r, dict):
+            remappings = list(r.items())
+        elif isinstance(r, list):
+            remappings = [tuple(pair) if isinstance(pair, (list, tuple)) else pair for pair in r]
+
     return Node(
         package=args['package'],
         executable=args['executable'],
@@ -136,6 +144,7 @@ def create_node(args: dict, config_nodes_path: str) -> Node:
               + '_' + ''.join(secrets.choice(chars) for i in range(8))
               if 'name' not in args else args['name']),
         arguments=None if 'arguments' not in args else args['arguments'],
+        remappings=remappings,
         parameters=params,
         respawn=False if 'respawn' not in args else args['respawn'],
         prefix=None if 'prefix' not in args else args['prefix'],

@@ -108,6 +108,9 @@ To disable environment substitution, set `BOB_SUBSTITUTE_ENV_VARS=0`.
     background_b: 0
     scalar_param: 1.5
     some_string: "hello bob"
+  remappings:                 # Optional: list of pairs [old, new] or dictionary
+    - ["input_topic", "/bot/input_topic"]
+    - ["internal/data", "~/input_topic"]
   output: log                 # Optional: 'log' or 'screen'
 ```
 
