@@ -147,6 +147,7 @@ def create_node(args: dict, config_nodes_path: str) -> Node:
         remappings=remappings,
         parameters=params,
         respawn=False if 'respawn' not in args else args['respawn'],
+        respawn_delay=0.0 if 'respawn_delay' not in args else float(args['respawn_delay']),
         prefix=None if 'prefix' not in args else args['prefix'],
         output='log' if 'output' not in args else args['output'],
         on_exit=None if not int(os.getenv('BOB_LAUNCH_AUTOABORT', '1')) else [

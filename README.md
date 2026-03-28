@@ -98,9 +98,9 @@ To disable environment substitution, set `BOB_SUBSTITUTE_ENV_VARS=0`.
   executable: usb_cam_node_exe
   arguments:                  # Optional: list of CLI arguments
     - --ros-args
-    - --params-file
     - /path/to/params.yaml
   respawn: false              # Optional: default is false
+  respawn_delay: 2.0          # Optional: seconds to wait before respawn (default 0.0)
   prefix: 'xterm -e'          # Optional: runs node in xterm (or gdb, nice, etc.)
   parameters:                 # Optional: inline node parameters
     background_r: 255
