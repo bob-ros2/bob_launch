@@ -50,7 +50,7 @@ def resolve_pkg_share(value: Union[str, dict, list], current_pkg: str) -> Union[
         if os.getenv('BOB_SUBSTITUTE_ENV_VARS', '1').lower() in ('1', 'true', 'on', 'yes'):
             value = re.sub(
                 r'\$\{([^}:]+)(?::-(.*?))?\}',
-                lambda m: os.getenv(m.group(1), m.group(2) if m.group(2) is not None else ""),
+                lambda m: os.getenv(m.group(1), m.group(2) if m.group(2) is not None else ''),
                 value
             )
 
