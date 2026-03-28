@@ -66,21 +66,28 @@ You can quickly composite different system "layers" (e.g., base drivers + percep
 cat base_robot.yaml nav2_stack.yaml custom_logic.yaml | ros2 run bob_launch launch.sh
 ```
 
-### Environment Variable Substitution
-Any string in your YAML/JSON configuration or the `config:=`/`config_nodes:=` arguments can contain environment variable placeholders:
-- `${MYVAR}`: Replaces with the value of `MYVAR` or an empty string if unset.
-- `${MYVAR:-/some/default}`: Replaces with the value of `MYVAR` or `/some/default` if unset.
+### Dynamic Substitution & Placeholders
+`bob_launch` supports powerful dynamic string substitution in all configuration fields and launcher arguments (like `config:=` and `config_nodes:=`).
 
-Example:
-```yaml
-- name: ${NODE_NAME:-talker}
-  package: demo_nodes_cpp
-  executable: talker
-  parameters:
-    - path: ${DATA_DIR:-/tmp}/config.yaml
+#### Environment Variables (`${VAR}`)
+Supports shell-like syntax for dynamic values:
+- `${MYVAR}`: Replaces with the value or an empty string.
+- `${MYVAR:-/default/path/}`: Replaces with the value or the specified default if unset.
+
+#### Path Placeholders (`//PKGSHARE`)
+Avoid hardcoded absolute paths by dynamically resolving ROS 2 package share directories:
+- `//PKGSHARE/`: Resolves to the share directory of the package defined for the current entity (implicit).
+- `//PKGSHARE:pkg_name/`: Resolves to the share directory of `pkg_name` (explicit).
+
+#### Combination & CLI Usage
+These mechanisms can be combined and even used directly in the `ros2 launch` command arguments:
+
+```bash
+ros2 launch bob_launch generic.launch.py \
+  config:='//PKGSHARE:my_pkg/config/${ROBOT_ENV:-dev}.yaml'
 ```
 
-To disable this feature, set `BOB_SUBSTITUTE_ENV_VARS=0`.
+To disable environment substitution, set `BOB_SUBSTITUTE_ENV_VARS=0`.
 
 ## Configuration Schema
 
