@@ -14,9 +14,24 @@
 - **Path Placeholders**: Use `//PKGSHARE/` (current node package) or `//PKGSHARE:pkg/` to dynamically resolve ROS 2 package share directories in parameters and arguments.
 - **Environment Substitution**: Support for shell-like `${VAR}` or `${VAR:-default}` syntax in all configuration fields and relevant launch arguments.
 
-## Quick Start: `launch.sh`
+## Native ROS 2 Usage (Preferred)
 
-The `launch.sh` script is the primary entry point. It simplifies execution by handling environment variables and temporary file management for you.
+You can call the launch file directly using standard ROS 2 launch arguments:
+
+```bash
+ros2 launch bob_launch generic.launch.py config:=my_config.yaml
+```
+
+To pass an optional global node parameter file:
+```bash
+ros2 launch bob_launch generic.launch.py config:=my_config.yaml config_nodes:=node_params.yaml
+```
+
+*Note: You can also use the environment variable `BOB_LAUNCH_CONFIG=./my_config.yaml` as an alternative to the `config:=` argument.*
+
+## Fast Execution: `launch.sh`
+
+The `launch.sh` script is a convenient wrapper that simplifies execution by handling environment variables and temporary file management for you.
 
 ### 1. Launch from a file
 ```bash
@@ -32,21 +47,6 @@ ros2 run bob_launch launch.sh my_config.yaml global_params.yaml
 ```bash
 ros2 run bob_launch launch.sh my_config.json
 ```
-
-## Native ROS 2 Usage (Preferred)
-
-You can call the launch file directly using standard ROS 2 launch arguments:
-
-```bash
-ros2 launch bob_launch generic.launch.py config:=my_config.yaml
-```
-
-To pass an optional global node parameter file:
-```bash
-ros2 launch bob_launch generic.launch.py config:=my_config.yaml config_nodes:=node_params.yaml
-```
-
-*Note: You can also use the environment variable `BOB_LAUNCH_CONFIG=./my_config.yaml` as an alternative to the `config:=` argument.*
 
 ## Advanced Usage
 
