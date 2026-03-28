@@ -114,6 +114,20 @@ To disable environment substitution, set `BOB_SUBSTITUTE_ENV_VARS=0`.
   output: log                 # Optional: 'log' or 'screen'
 ```
 
+### Topic Remappings
+Nodes can be launched with custom topic remappings using the `remappings:` field. You can provide them as a **list of pairs** (recommended for dynamic remappings) or as a **dictionary**.
+
+```yaml
+- name: my_node
+  package: my_pkg
+  executable: my_exe
+  remappings:
+    - ["/old/chatter", "/new/chatter"]  # List of pairs [from, to]
+    - ["~/status", "${STATUS_TOPIC}"]   # List format supports placeholders in both fields
+    # OR Dictionary format:
+    # chatter: /global/chatter          # Note: placeholders work in values only
+```
+
 ### Including Launch Files
 ```yaml
 - launch_file: 
