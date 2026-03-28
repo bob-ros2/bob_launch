@@ -39,13 +39,21 @@ import yaml
 
 def resolve_pkg_share(value: Union[str, dict, list], current_pkg: str) -> Union[str, dict, list]:
     """
-    Recursively resolve //PKGSHARE:pkg/ or //PKGSHARE/ placeholders.
+    Recursively resolve //PKGSHARE:pkg/, //PKGSHARE/ and ${ENV_VAR} placeholders.
 
     :param value: String, dict, or list to resolve.
     :param current_pkg: Package name for implicit resolution (//PKGSHARE/...).
     :return: Resolved value.
     """
     if isinstance(value, str):
+        # 0. Handle environment variables: ${VAR} or ${VAR:-default}
+        if os.getenv('BOB_SUBSTITUTE_ENV_VARS', '1').lower() in ('1', 'true', 'on', 'yes'):
+            value = re.sub(
+                r'\$\{([^}:]+)(?::-(.*?))?\}',
+                lambda m: os.getenv(m.group(1), m.group(2) if m.group(2) is not None else ""),
+                value
+            )
+
         # 1. Handle explicit: //PKGSHARE:pkg/path
         for match in re.finditer(r'//PKGSHARE:([^/]+)', value):
             target_pkg = match.group(1)
@@ -85,6 +93,7 @@ def create_launcher(
     pkg = launch_file['package_name'] if isinstance(launch_file, dict) else None
     launch_file = resolve_pkg_share(launch_file, pkg)
     launch_arguments = resolve_pkg_share(launch_arguments, pkg)
+    ns = resolve_pkg_share(ns, pkg)
 
     if isinstance(launch_file, dict):
         file = os.path.join(
@@ -178,6 +187,10 @@ def launch_setup(context, *args, **kwargs):
         LaunchConfiguration('config_nodes'))
     launch_config = context.perform_substitution(
         LaunchConfiguration('config'))
+
+    # Resolve placeholders in paths
+    config_nodes_path = resolve_pkg_share(config_nodes_path, None)
+    launch_config = resolve_pkg_share(launch_config, None)
 
     if not launch_config:
         print("[ERROR] No configuration provided! Use 'config:=' or "

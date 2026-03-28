@@ -12,6 +12,7 @@
 - **Auto-Abort Protection**: Optionally shut down the entire launch tree if any critical node exits (ideal for Docker/CI).
 - **Global Parameters**: Inject a shared parameter file into all nodes launched within a configuration.
 - **Path Placeholders**: Use `//PKGSHARE/` (current node package) or `//PKGSHARE:pkg/` to dynamically resolve ROS 2 package share directories in parameters and arguments.
+- **Environment Substitution**: Support for shell-like `${VAR}` or `${VAR:-default}` syntax in all configuration fields and relevant launch arguments.
 
 ## Quick Start: `launch.sh`
 
@@ -64,6 +65,22 @@ You can quickly composite different system "layers" (e.g., base drivers + percep
 ```bash
 cat base_robot.yaml nav2_stack.yaml custom_logic.yaml | ros2 run bob_launch launch.sh
 ```
+
+### Environment Variable Substitution
+Any string in your YAML/JSON configuration or the `config:=`/`config_nodes:=` arguments can contain environment variable placeholders:
+- `${MYVAR}`: Replaces with the value of `MYVAR` or an empty string if unset.
+- `${MYVAR:-/some/default}`: Replaces with the value of `MYVAR` or `/some/default` if unset.
+
+Example:
+```yaml
+- name: ${NODE_NAME:-talker}
+  package: demo_nodes_cpp
+  executable: talker
+  parameters:
+    - path: ${DATA_DIR:-/tmp}/config.yaml
+```
+
+To disable this feature, set `BOB_SUBSTITUTE_ENV_VARS=0`.
 
 ## Configuration Schema
 
@@ -119,3 +136,4 @@ Great for reusing common namespaces or remappings across many nodes:
 | `config` | Path to YAML/JSON config file or raw string. | `BOB_LAUNCH_CONFIG` |
 | `config_nodes` | Path to an optional global parameter file. | `BOB_LAUNCH_CONFIG_NODES` |
 | `BOB_LAUNCH_AUTOABORT` | Environment variable: if `1`, shuts down if any node exits. | `1` |
+| `BOB_SUBSTITUTE_ENV_VARS` | Environment variable: if `1`, resolves `${VAR}` placeholders in config. | `1` |
